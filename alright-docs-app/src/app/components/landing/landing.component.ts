@@ -17,7 +17,7 @@ export class LandingComponent implements OnInit {
     private authService: AuthService,
     private globalService: GlobalService
   ) {
-    globalService.setTitle("Mantis");
+    globalService.setTitle("Alright");
   }
 
   goLogin() {
@@ -26,13 +26,5 @@ export class LandingComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
-  // changeView() {
-  //   if (this.mode == "landing") {
-  //     this.authService.setView("system");
-  //   } else {
-  //     this.authService.setView("landing");
-  //   }
-  // }
 
 }

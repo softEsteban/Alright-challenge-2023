@@ -27,7 +27,7 @@ export class AuthService {
 
     async register(user: any) {
         const response = await lastValueFrom(
-            this.http.post(`${this.host}/auth/register`, user)
+            this.http.post(`${this.host}/auth/registerUser`, user)
         );
         return response;
     }

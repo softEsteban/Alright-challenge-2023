@@ -18,7 +18,7 @@
           <input
             formControlName="email"
             nz-input
-            placeholder="email"
+            placeholder="Email"
             class="form-input"
           />
         </nz-input-group>
@@ -33,7 +33,7 @@
             formControlName="password"
             nz-input
             type="password"
-            placeholder="Password"
+            placeholder="Contraseña"
             class="form-input"
           />
         </nz-input-group>
@@ -41,21 +41,17 @@
     </nz-form-item>
 
     <nz-form-item class="login-button">
-      <button nz-button nzType="primary">Log in</button>
-    </nz-form-item>
-
-    <nz-form-item>
-      <button nz-button nzType="default" nzBlock (click)="loginWithGoogle()">
-        <i nz-icon nzType="google"></i> Login with Google
-      </button>
+      <button nz-button nzType="primary">Entrar</button>
     </nz-form-item>
 
     <nz-form-item>
       <nz-form-control>
+        <!-- 
+          <br />
+          <a class="login-form-forgot" href="">Forgot password?</a>
+        -->
         <br />
-        <a class="login-form-forgot" href="">Forgot password?</a>
-        <br />
-        <a (click)="goToRegister()">Create an account!</a>
+        <a (click)="goToRegister()">Regístrate!</a>
       </nz-form-control>
     </nz-form-item>
   </form>

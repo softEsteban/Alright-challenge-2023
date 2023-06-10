@@ -19,7 +19,6 @@ export class RegisterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private usersService: UsersService,
     private authService: AuthService,
     private message: NzMessageService,
     private globalService: GlobalService
@@ -28,7 +27,6 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getCompaniesData();
     this.initForm();
   }
 
@@ -38,8 +36,7 @@ export class RegisterComponent implements OnInit {
       lastName: ["", [Validators.required]],
       email: ["", [Validators.required]],
       password: ["", [Validators.required]],
-      passwordConfirm: ["", [Validators.required]],
-      company: ["", [Validators.required]]
+      passwordConfirm: ["", [Validators.required]]
     })
   }
 
@@ -53,24 +50,22 @@ export class RegisterComponent implements OnInit {
     }
 
     const user = {
-      use_name: value.firstName,
-      use_lastname: value.lastName,
-      use_email: value.email,
-      use_pass: value.password,
-      cop_code: value.company,
-      confirmed_email: 'unconfirmed'
+      name: value.firstName,
+      lastname: value.lastName,
+      email: value.email,
+      password: value.password,
+      type: "user"
     };
-
-    console.log("User", user);
 
     try {
       const data = await this.authService.register(user);
       if (data) {
         let response = JSON.parse(JSON.stringify(data));
-        if (response && response["message"] === "User has been registered. Ready to be confirmed!") {
+        if (response["message"] === "User registered successfully") {
           this.createMessage("success", "User has been created!");
-          this.router.navigate(["/confirm-email"]);
-        } else if (response["message"] === "A user with this email already exists") {
+          this.router.navigate(["/login"]);
+        }
+        else if (response["message"] === "A user with this email already exists") {
           this.createMessage("error", "Email already belongs to another user");
         }
       } else {
@@ -78,29 +73,8 @@ export class RegisterComponent implements OnInit {
       }
     } catch (error) {
       console.log(error);
-      this.createMessage("error", "An error occurred during registration");
+      this.createMessage("error", "Email already belongs to another user");
     }
-  }
-
-  async getCompaniesData() {
-    let data: any = await this.usersService.getAllCompanies();
-    if (data.data.length > 0) {
-      this.companies = data.data;
-    }
-  }
-
-
-  public async registerWithGitHub() {
-    try {
-      // await this.githubService.login();
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
-
-  public registerWithGoogle() {
-
   }
 
   public goToLogin() {

@@ -47,8 +47,17 @@ export class LayoutComponent implements OnInit {
     // this.redirectToDocs('revision')
   }
 
+  // redirectToDocs(docState: any) {
+  //   this.router.navigate(['/docs', docState], { state: { docState: docState } });
+  // }
+
+  // redirectToDocs(docState: any) {
+  //   const url = `/docs/${docState}`;
+  //   this.router.navigateByUrl(url, { state: { docState: docState } });
+  // }
   redirectToDocs(docState: any) {
-    this.router.navigate(['/docs', docState], { state: { docState: docState } });
+    const url = `/docs/my-docs`;
+    this.router.navigateByUrl(url);
   }
 
 

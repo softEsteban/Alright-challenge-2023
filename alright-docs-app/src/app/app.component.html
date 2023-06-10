@@ -1,33 +1,3 @@
 <div class="container">
   <router-outlet></router-outlet>
-
-  <div
-    *ngIf="isAuthenticated$ | async"
-    class="chat-header"
-    [ngStyle]="{ 'height.px': showContent ? 300 : 45 }"
-  >
-    <div
-      style="
-        display: flex;
-        justify-content: space-between;
-        padding: 12px;
-        cursor: pointer;
-      "
-      (click)="toggleContent()"
-    >
-      <div style="display: flex; width: 20%; justify-content: space-around">
-        <nz-badge nzSize="small" [nzCount]="5">
-          <a class="head-example"></a>
-        </nz-badge>
-        <p>Chat</p>
-      </div>
-
-      <span
-        nz-icon
-        [nzType]="showContent ? 'down' : 'up'"
-        nzTheme="outline"
-      ></span>
-    </div>
-    <!-- <app-chat *ngIf="showContent" class="chat-container"></app-chat> -->
-  </div>
 </div>

@@ -18,6 +18,7 @@ export class DocListComponent implements OnInit {
 
   ngOnInit(): void {
     this.docState = history.state.docState;
+    // this.globalService.setTitle(this.docState);
     console.log(this.docState)
   }
 
