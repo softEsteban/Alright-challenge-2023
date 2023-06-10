@@ -1,0 +1,186 @@
+<div class="register-container">
+  <div style="display: flex">
+    <span
+      nz-icon
+      nzType="left"
+      nzTheme="outline"
+      style="font-size: 21px; margin: 12px; cursor: pointer"
+      routerLink="/landing"
+    ></span>
+    <h1 class="register-title">Register</h1>
+  </div>
+
+  <form nz-form [formGroup]="registerForm" (ngSubmit)="register(registerForm)">
+    <nz-form-item>
+      <nz-form-control>
+        <nz-input-group>
+          <input
+            formControlName="firstName"
+            nz-input
+            placeholder="Name"
+            class="form-input"
+          />
+        </nz-input-group>
+      </nz-form-control>
+      <div
+        class="validation-message"
+        *ngIf="
+          registerForm.get('firstName')!.invalid &&
+          registerForm.get('firstName')!.touched
+        "
+        nz-form-explain
+      >
+        Please enter your name
+      </div>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control>
+        <nz-input-group>
+          <!-- <i nz-icon nzType="user"></i> -->
+          <input
+            formControlName="lastName"
+            nz-input
+            placeholder="Lastname"
+            class="form-input"
+          />
+        </nz-input-group>
+      </nz-form-control>
+      <div
+        class="validation-message"
+        *ngIf="
+          registerForm.get('lastName')!.invalid &&
+          registerForm.get('lastName')!.touched
+        "
+        nz-form-explain
+      >
+        Please enter your last name
+      </div>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control>
+        <nz-input-group>
+          <input
+            formControlName="email"
+            nz-input
+            placeholder="Email"
+            class="form-input"
+          />
+        </nz-input-group>
+      </nz-form-control>
+      <div
+        class="validation-message"
+        *ngIf="
+          registerForm.get('email')!.invalid &&
+          registerForm.get('email')!.touched
+        "
+        nz-form-explain
+      >
+        Please enter your email
+      </div>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control>
+        <nz-input-group>
+          <nz-select
+            nzAllowClear
+            formControlName="company"
+            nzPlaceHolder="Choose a company"
+            style="text-align: start"
+          >
+            <ng-container *ngFor="let data of companies">
+              <nz-option [nzValue]="data.cop_code" [nzLabel]="data.cop_name">{{
+                data.cop_name
+              }}</nz-option>
+            </ng-container>
+          </nz-select>
+          <div
+            class="validation-message"
+            *ngIf="
+              registerForm.get('company')!.invalid &&
+              registerForm.get('company')!.touched
+            "
+            nz-form-explain
+          >
+            Please enter your company
+          </div>
+        </nz-input-group>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control>
+        <nz-input-group>
+          <!-- <i nz-icon nzType="lock"></i> -->
+          <input
+            formControlName="password"
+            nz-input
+            type="password"
+            placeholder="Password"
+            class="form-input"
+          />
+        </nz-input-group>
+      </nz-form-control>
+      <div
+        class="validation-message"
+        *ngIf="
+          registerForm.get('password')!.invalid &&
+          registerForm.get('password')!.touched
+        "
+        nz-form-explain
+      >
+        Please enter your password
+      </div>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control>
+        <nz-input-group>
+          <input
+            formControlName="passwordConfirm"
+            nz-input
+            type="password"
+            placeholder="Password"
+            class="form-input"
+          />
+        </nz-input-group>
+      </nz-form-control>
+      <div
+        class="validation-message"
+        *ngIf="
+          registerForm.get('passwordConfirm')!.invalid &&
+          registerForm.get('passwordConfirm')!.touched
+        "
+        nz-form-explain
+      >
+        Please confirm your password
+      </div>
+    </nz-form-item>
+
+    <nz-form-item>
+      <button nz-button nzType="primary" class="register-button">
+        Register
+      </button>
+    </nz-form-item>
+
+    <nz-form-item>
+      <button nz-button nzType="default" nzBlock (click)="registerWithGoogle()">
+        <i nz-icon nzType="google"></i> Register with Google
+      </button>
+      <br />
+      <br />
+      <button nz-button nzType="default" nzBlock (click)="registerWithGitHub()">
+        <i nz-icon nzType="github"></i> Register with GitHub
+      </button>
+    </nz-form-item>
+
+    <nz-form-item>
+      <nz-form-control>
+        <br />
+        <a (click)="goToLogin()">Already have an account!</a>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>

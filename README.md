@@ -29,3 +29,9 @@ nest start --watch
 - La información de los usuarios, documentos, comentarios y logs de acciones se almacenan en MongoDB.
   **Swagger:**
 - La API documenta sus endpoints con Swagger y un conjuto de DTOS.
+  **JWT Token:**
+- La API documenta sus endpoints con Swagger y un conjuto de DTOS.
+
+## Base de datos - Database Diagram:
+
+![Image Description](alright-db.png)

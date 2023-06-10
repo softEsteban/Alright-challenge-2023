@@ -1,0 +1,25 @@
+.ant-modal {
+  top: 40px;
+}
+
+.container {
+  overflow-y: auto;
+  max-height: calc(100vh - 200px);
+  top: 49px;
+}
+
+.validation-message {
+  color: #ff4d4f;
+  font-size: 12px;
+}
+
+nz-row {
+  margin-bottom: 10px;
+}
+
+.ant-modal-wrap {
+  position: fixed;
+  top: -60px;
+  right: 7px;
+  bottom: 0;
+}

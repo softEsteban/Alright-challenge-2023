@@ -1,0 +1,110 @@
+<ng-container>
+  <nz-layout class="app-layout">
+    <!-- Side bar -->
+    <nz-sider
+      class="menu-sidebar"
+      nzCollapsible
+      nzWidth="256px"
+      nzBreakpoint="md"
+      [(nzCollapsed)]="isCollapsed"
+      [nzTrigger]="null"
+    >
+      <div class="sidebar-logo">
+        <a href="https://github.com/softEsteban/bugtracker-app" target="_blank">
+          <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo" />
+          <h1>Alright</h1>
+        </a>
+      </div>
+
+      <ul
+        *ngFor="let menu of profileConfig"
+        nz-menu
+        nzTheme="dark"
+        nzMode="inline"
+        [nzInlineCollapsed]="isCollapsed"
+      >
+        <li
+          nz-submenu
+          nzOpen
+          [nzTitle]="menu.title"
+          [nzIcon]="menu.icon"
+          (click)="executeMethod(menu.method || '')"
+        >
+          <div *ngIf="menu.children">
+            <ul *ngFor="let sub of menu.children">
+              <li
+                nz-menu-item
+                nzMatchRouter
+                (click)="executeMethod(sub.method || '')"
+              >
+                <a>{{ sub.title }}</a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+      <span
+        class="header-trigger"
+        (click)="isCollapsed = !isCollapsed"
+        nz-icon
+        [nzType]="isCollapsed ? 'right' : 'left'"
+      ></span>
+    </nz-sider>
+
+    <!-- Layout -->
+    <nz-layout>
+      <div class="site-page-header-ghost-wrapper">
+        <nz-page-header
+          [nzGhost]="false"
+          style="border-bottom: 2px solid #e8e8e8"
+        >
+          <!-- <nz-page-header-title>Title</nz-page-header-title> -->
+          <!-- <nz-page-header-subtitle>Project manager</nz-page-header-subtitle> -->
+          <nz-page-header-extra>
+            <nz-space
+              style="
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <nz-tag
+                [nzColor]="'blue'"
+                style="height: 25px"
+                nz-button
+                nz-popover
+                [nzPopoverContent]="userSession"
+                nzPopoverPlacement="bottom"
+              >
+                <span style="padding: 0 0 0 9px">{{ userName }}</span>
+                <!-- <span nz-icon nzType="caretDown"></span> -->
+              </nz-tag>
+              <ng-template #userSession>
+                <button nz-button nzType="default" (click)="logout()">
+                  <span nz-icon nzType="logout"></span>
+                  Logout
+                </button>
+              </ng-template>
+              <div class="avatar">
+                <!-- <nz-badge [nzCount]="5" style="margin-right: 24px"></nz-badge> -->
+                <nz-avatar
+                  [nzSrc]="
+                    userPic ||
+                    'https://firebasestorage.googleapis.com/v0/b/mantis-project-7c277.appspot.com/o/avataaars-example.png?alt=media&token=0e4ce4f4-10cd-4009-af54-71137fe4e676'
+                  "
+                  [nzShape]="'circle'"
+                ></nz-avatar>
+              </div>
+            </nz-space>
+          </nz-page-header-extra>
+        </nz-page-header>
+      </div>
+
+      <nz-content>
+        <div class="inner-content">
+          <router-outlet></router-outlet>
+        </div>
+      </nz-content>
+    </nz-layout>
+  </nz-layout>
+</ng-container>
