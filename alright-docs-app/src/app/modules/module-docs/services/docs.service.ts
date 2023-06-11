@@ -33,4 +33,10 @@ export class DocsService {
         );
     }
 
+    async requestRevision(docId: any) {
+        return await lastValueFrom(
+            this.http.put(`${this.host}/docs/requestRevision/${docId}`, {})
+        );
+    }
+
 }

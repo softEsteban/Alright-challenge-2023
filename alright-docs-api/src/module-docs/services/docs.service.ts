@@ -1,4 +1,4 @@
-import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, ConflictException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { Docs } from '../schemas/docs.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -39,5 +39,19 @@ export class DocsService {
         } catch (error) {
             throw new ConflictException('Failed to create document');
         }
+    }
+
+    async requestRevision(docId: string): Promise<Docs> {
+        const updatedDoc = await this.docsModel.findByIdAndUpdate(
+            docId,
+            { state: 'En revisión' },
+            { new: true }
+        );
+
+        if (!updatedDoc) {
+            throw new NotFoundException('Document not found');
+        }
+
+        return updatedDoc;
     }
 }

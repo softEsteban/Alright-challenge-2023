@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { DocDetailComponent } from './doc-detail/doc-detail.component';
 import { CreateDocComponent } from './create-doc/create-doc.component';
 import { DocViewerComponent } from './doc-viewer/doc-viewer.component';
@@ -23,6 +23,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     PdfViewerModule,
     ReactiveFormsModule,
     FormsModule
+  ],
+  providers: [
+    DatePipe
   ]
 })
 export class DocsModule { }

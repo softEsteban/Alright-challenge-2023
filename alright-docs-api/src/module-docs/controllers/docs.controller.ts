@@ -29,4 +29,10 @@ export class DocsController {
     async createDoc(@Body() doc: CreateDocDto): Promise<{}> {
         return this.docsService.createDoc(doc);
     }
+
+    @ApiOperation({ summary: 'Request revision for a document' })
+    @Put('requestRevision/:docId')
+    async requestRevision(@Param('docId') docId: string): Promise<{}> {
+        return this.docsService.requestRevision(docId);
+    }
 }

@@ -1,5 +1,10 @@
 <h2 nz-typography>{{ pageTitle || "Mis documentos" }}</h2>
-<button nz-button nzType="primary" (click)="openCreateDocModal()">
+<button
+  *ngIf="docState == 'my-docs'"
+  nz-button
+  nzType="primary"
+  (click)="openCreateDocModal()"
+>
   Crear documento
 </button>
 
@@ -13,10 +18,11 @@
         <a href="{{ item.url }}">{{ item.name }}</a>
       </nz-list-item-meta-title>
       <nz-list-item-meta-description>
-        {{ item.state }}
+        {{ item.state }} -
+        {{ item.dateCreated | date : "dd MMMM yyyy, hh:mm a" }}
       </nz-list-item-meta-description>
     </nz-list-item-meta>
-    {{ item.dateCreated }}
+
     <nz-list-item-extra>
       <img
         width="272"
@@ -24,12 +30,24 @@
         src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
       />
     </nz-list-item-extra>
-    <button nz-button nzType="primary" (click)="viewPdf(item.url)">
-      Ver PDF
-    </button>
-    <button nz-button nzType="primary" (click)="sendToRevision(item)">
-      Solicitar revisión
-    </button>
+
+    <nz-row nzGutter="12">
+      <nz-col>
+        <button nz-button nzType="primary" (click)="viewPdf(item.url)">
+          Ver PDF
+        </button>
+      </nz-col>
+      <nz-col>
+        <button
+          nz-button
+          nzType="primary"
+          (click)="sendToRevision(item)"
+          *ngIf="item.state == 'Sin revisar'"
+        >
+          Solicitar revisión
+        </button>
+      </nz-col>
+    </nz-row>
   </nz-list-item>
 </nz-list>
 

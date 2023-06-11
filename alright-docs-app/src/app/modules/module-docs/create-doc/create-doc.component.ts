@@ -48,8 +48,6 @@ export class CreateDocComponent implements OnInit {
   loading = false;
   avatarUrl?: string;
 
-
-
   constructor(
     private fb: FormBuilder,
     private message: NzMessageService,
@@ -69,21 +67,12 @@ export class CreateDocComponent implements OnInit {
     });
   }
 
-  // previewFile(file: File): void {
-  //   const reader = new FileReader();
-  //   reader.onload = (event: any) => {
-  //     this.avatarUrl = event.target.result;
-  //   };
-  //   reader.readAsDataURL(file);
-  // }
-
   handleFilesUpload(event: NzUploadChangeParam): void {
     const fileList: NzUploadFile[] = event.fileList;
     if (fileList.length > 0) {
       const list = fileList
         .map((file) => file.originFileObj as File | undefined)
         .filter((file): file is File => file !== undefined);
-      console.log(list);
       this.uploadedFiles = list;
     }
   }
@@ -91,28 +80,22 @@ export class CreateDocComponent implements OnInit {
   beforeUpload = (file: NzUploadFile): boolean => {
     // Define allowed file types
     const allowedTypes = [
-      'application/pdf',
-      'application/msword',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'image/png',
-      'image/jpeg',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      'application/pdf'
     ];
 
     // Define maximum file size in bytes
-    const maxFileSize = 2 * 1024 * 1024;
+    const maxFileSize = 5 * 1024 * 1024; //5MB
 
     // Perform file type and size checks
     const isValidType = typeof file.type === 'string' && allowedTypes.includes(file.type);
     const isValidSize = typeof file.size === 'number' && file.size <= maxFileSize;
 
     if (!isValidType) {
-      this.createMessage("error", "Invalid file type. Please upload an image (JPEG, PNG, PDF, DOC, EXCEL).");
+      this.createMessage("error", "Invalid file type. Please upload a PDF.");
     }
 
     if (!isValidSize) {
-      this.createMessage("error", "File size exceeds the maximum limit (2MB).");
+      this.createMessage("error", "File size exceeds the maximum limit (5MB).");
     }
 
     return isValidType && isValidSize;

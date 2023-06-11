@@ -8,11 +8,11 @@ import { CreateDocComponent } from '../create-doc/create-doc.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FirebaseService } from 'src/app/services/firebase.service';
-
-
+import { DatePipe, registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
 
 interface Doc {
-  id: string;
+  _id: string;
   name: string;
   url: string;
   state: string;
@@ -40,41 +40,40 @@ export class DocListComponent implements OnInit {
     private docsService: DocsService,
     private firebaseService: FirebaseService,
     private authService: AuthService,
-    private sanitizer: DomSanitizer,
     private viewContainerRef: ViewContainerRef,
     private modal: NzModalService,
     private message: NzMessageService,
     private router: Router) {
     globalService.setTitle("Docs");
+    registerLocaleData(localeEs);
   }
 
 
   ngOnInit(): void {
 
+    //Fetch data
+    this.userId = this.authService.getSessionUserId();
+    this.getDocuments();
 
     //Subscribes to detect changes in route
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         const currentState = this.router.getCurrentNavigation()?.extras.state;
+
         if (currentState && currentState['docState']) {
-          this.pageTitle = currentState['docState'] == "my-docs" ? "Mis documentos" : "Mis revisiones"
+          this.pageTitle = currentState['docState'] === 'my-docs' ? 'Mis documentos' : 'Mis revisiones';
           this.docState = currentState['docState'];
+
+          if (currentState['docState'] === 'revision') {
+            this.listOfDocs = this.listOfDocs.filter((doc) => doc.state === 'En revisión');
+          } else {
+            this.getDocuments();
+          }
         } else {
-          this.docState = "";
+          this.docState = '';
         }
       }
     });
-
-    //Fetchs data
-    this.userId = this.authService.getSessionUserId();
-    this.getDocuments();
-
-    // const pdfDocGenerator = pdfMake.createPdf(this.pdfDefinition);
-
-    // pdfDocGenerator.getBase64((data) => {
-    //   const base64 = `data:application/pdf;base64,${data}`;
-    //   this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(base64);
-    // });
   }
 
   async getDocuments() {
@@ -82,9 +81,11 @@ export class DocListComponent implements OnInit {
     console.log(data);
     if (data.length > 0) {
       this.listOfDocs = data;
-      // this.listOfData = data.data;
-      // this.filteredData = data.data;
     }
+  }
+
+  createMessage(type: string, text: string): void {
+    this.message.create(type, `${text}`);
   }
 
   async openCreateDocModal(): Promise<any> {
@@ -110,14 +111,13 @@ export class DocListComponent implements OnInit {
     });
     modal.getContentComponent();
     modal.afterOpen.subscribe(() => console.log('[afterOpen] emitted!'));
-    await modal.afterClose.subscribe(createdUser => {
-      // this.getUsers();
+    await modal.afterClose.subscribe(createdDoc => {
+      this.getDocuments();
     });
 
   }
 
   viewPdf(url: string) {
-    // this.pdfSrc = url;
     const filePath = `${this.pdfSrc}`; // Replace with the actual file path in Firebase Storage
     this.firebaseService.downloadFile(filePath)
       .then((downloadUrl) => {
@@ -130,18 +130,20 @@ export class DocListComponent implements OnInit {
       });
   }
 
-  sendToRevision(item: {}) {
-    console.log(item)
+  async sendToRevision(item: any) {
+    const index = this.listOfDocs.findIndex((doc) => doc._id === item._id);
+    if (index !== -1) {
+      this.listOfDocs.splice(index, 1);
+    }
+
+    const data: any = await this.docsService.requestRevision(item._id);
+    if (data) {
+      this.listOfDocs.push(data);
+      this.createMessage("success", "El documento se ha enviado a revisión");
+    }
   }
 
   downloadPdf(): void {
-    // // Replace the following URL with your desired PDF URL
-    // const pdfUrl = 'https://firebasestorage.googleapis.com/v0/b/mantis-project-7c277.appspot.com/o/alright-docs%2Freglamento-fic-inmobiliario-rentamas.pdf?alt=media&token=9e0602d5-0557-4384-b4b5-99a5d8825532&_gl=1*175a73*_ga*ODU4MzgwMDIuMTY3OTg3OTU4NQ..*_ga_CW55HF8NVT*MTY4NjQ1MjIzMC4zNC4wLjE2ODY0NTIyMzAuMC4wLjA.';
-
-    // // Sanitize the PDF URL
-    // this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(pdfUrl) as string;
-
-
   }
 }
 
