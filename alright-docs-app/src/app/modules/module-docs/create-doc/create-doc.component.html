@@ -1,1 +1,55 @@
-<p>create-doc works!</p>
+<div class="container">
+  <nz-form [formGroup]="docForm">
+    <nz-row>
+      <nz-form-control nzHasFeedback>
+        <nz-col nzXs="24" nzSm="24">
+          <h5 nz-typography>Doc name*</h5>
+          <input nz-input formControlName="name" placeholder="Type name" />
+          <div
+            class="validation-message"
+            *ngIf="docForm.get('name')!.invalid && docForm.get('name')!.touched"
+            nz-form-explain
+          >
+            Please enter a name
+          </div>
+        </nz-col>
+      </nz-form-control>
+    </nz-row>
+
+    <nz-row style="display: inline; margin-bottom: 12px">
+      <h5 nz-typography>Attach a file</h5>
+
+      <nz-upload
+        class="upload-list-inline"
+        nzListType="picture"
+        [(nzFileList)]="fileList"
+        (nzChange)="handleFilesUpload($event)"
+        [nzBeforeUpload]="beforeUpload"
+      >
+        <button nz-button [disabled]="fileList.length == 1">
+          <span>
+            <span nz-icon nzType="upload"></span>
+            Subir
+          </span>
+        </button>
+      </nz-upload>
+    </nz-row>
+
+    <nz-row>
+      <nz-col nzXs="24" nzSm="8">
+        <nz-form-item class="submit-button">
+          <button
+            style="margin-top: 15px"
+            nz-button
+            nzType="primary"
+            [disabled]="docForm.invalid"
+            (click)="createDoc(docForm)"
+            nzBlock
+          >
+            Submit
+          </button>
+        </nz-form-item>
+      </nz-col>
+    </nz-row>
+  </nz-form>
+</div>

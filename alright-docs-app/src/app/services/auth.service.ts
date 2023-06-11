@@ -45,7 +45,7 @@ export class AuthService {
     getSessionUserId() {
         const user = localStorage.getItem('user') || {} as any;
         if (user) {
-            return JSON.parse(user)["use_code"];
+            return JSON.parse(user)["_id"];
         }
     }
 

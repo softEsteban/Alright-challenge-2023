@@ -24,14 +24,30 @@
         nzMode="inline"
         [nzInlineCollapsed]="isCollapsed"
       >
-        <!-- nzOpen -->
         <li
           nz-submenu
-          nzOpen
-          [nzTitle]="menu.title"
-          [nzIcon]="menu.icon"
+          [nzTitle]="menuTitleTemplate"
           (click)="executeMethod(menu.method || '')"
         >
+          <ng-template #menuTitleTemplate>
+            <ng-container
+              *ngIf="menu.children && menu.children.length > 0; else menuTitle"
+            >
+              <i nz-icon [nzType]="menu.icon"></i>
+              <span>{{ menu.title }}</span>
+              <i
+                nz-icon
+                class="arrow-icon"
+                [nzType]="isCollapsed ? 'right' : 'down'"
+              ></i>
+            </ng-container>
+            <ng-template #menuTitle>
+              <a>
+                <i nz-icon [nzType]="menu.icon"></i>
+                <span>{{ menu.title }}</span>
+              </a>
+            </ng-template>
+          </ng-template>
           <div *ngIf="menu.children">
             <ul *ngFor="let sub of menu.children">
               <li
@@ -45,6 +61,7 @@
           </div>
         </li>
       </ul>
+
       <span
         class="header-trigger"
         (click)="isCollapsed = !isCollapsed"
@@ -57,11 +74,10 @@
     <nz-layout>
       <div class="site-page-header-ghost-wrapper">
         <nz-page-header
+          (click)="isCollapsed = !isCollapsed"
           [nzGhost]="false"
           style="border-bottom: 2px solid #e8e8e8"
         >
-          <!-- <nz-page-header-title>Title</nz-page-header-title> -->
-          <!-- <nz-page-header-subtitle>Project manager</nz-page-header-subtitle> -->
           <nz-page-header-extra>
             <nz-space
               style="
@@ -79,7 +95,6 @@
                 nzPopoverPlacement="bottom"
               >
                 <span style="padding: 0 0 0 9px">{{ userName }}</span>
-                <!-- <span nz-icon nzType="caretDown"></span> -->
               </nz-tag>
               <ng-template #userSession>
                 <button nz-button nzType="default" (click)="logout()">
@@ -88,11 +103,10 @@
                 </button>
               </ng-template>
               <div class="avatar">
-                <!-- <nz-badge [nzCount]="5" style="margin-right: 24px"></nz-badge> -->
                 <nz-avatar
                   [nzSrc]="
                     userPic ||
-                    'https://firebasestorage.googleapis.com/v0/b/mantis-project-7c277.appspot.com/o/avataaars-example.png?alt=media&token=0e4ce4f4-10cd-4009-af54-71137fe4e676'
+                    'https://firebasestorage.googleapis.com/v0/b/mantis-project-7c277.appspot.com/o/user.png?alt=media&token=c691e322-947f-4ca5-aeeb-595169d10d5d&_gl=1*nmx5n6*_ga*ODU4MzgwMDIuMTY3OTg3OTU4NQ..*_ga_CW55HF8NVT*MTY4NjQzOTExMC4zMi4xLjE2ODY0MzkxNDQuMC4wLjA.'
                   "
                   [nzShape]="'circle'"
                 ></nz-avatar>

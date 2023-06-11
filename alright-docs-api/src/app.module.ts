@@ -6,7 +6,7 @@ import { HttpModule } from '@nestjs/axios';
 import { UtilitiesModule } from './module-utilities/utilities.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './module-auth/auth.module';
-import { DocsModule } from './module-auth copy/docs.module';
+import { DocsModule } from './module-docs/docs.module';
 
 @Module({
   imports: [

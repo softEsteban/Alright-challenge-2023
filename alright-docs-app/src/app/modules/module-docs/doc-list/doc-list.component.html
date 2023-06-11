@@ -1,1 +1,52 @@
-<p>doc-list works!</p>
+<h2 nz-typography>{{ pageTitle || "Mis documentos" }}</h2>
+<button nz-button nzType="primary" (click)="openCreateDocModal()">
+  Crear documento
+</button>
+
+<nz-list nzItemLayout="vertical" style="width: 50%">
+  <nz-list-item *ngFor="let item of listOfDocs">
+    <nz-list-item-meta>
+      <nz-list-item-meta-avatar
+        nzSrc="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+      ></nz-list-item-meta-avatar>
+      <nz-list-item-meta-title>
+        <a href="{{ item.url }}">{{ item.name }}</a>
+      </nz-list-item-meta-title>
+      <nz-list-item-meta-description>
+        {{ item.state }}
+      </nz-list-item-meta-description>
+    </nz-list-item-meta>
+    {{ item.dateCreated }}
+    <nz-list-item-extra>
+      <img
+        width="272"
+        alt="logo"
+        src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+      />
+    </nz-list-item-extra>
+    <button nz-button nzType="primary" (click)="viewPdf(item.url)">
+      Ver PDF
+    </button>
+    <button nz-button nzType="primary" (click)="sendToRevision(item)">
+      Solicitar revisión
+    </button>
+  </nz-list-item>
+</nz-list>
+
+<!-- <ng-container *ngIf="pdfSrc"> -->
+<!-- <pdf-viewer
+  [src]="pdfSrc"
+  [render-text]="true"
+  style="display: block"
+></pdf-viewer> -->
+<!-- </ng-container> -->
+
+<!-- <button nz-button nzType="primary" (click)="downloadPdf()">Download PDF</button>-->
+
+<!-- <ng-container *ngIf="pdfSrc"> -->
+<pdf-viewer
+  [src]="pdfSrc"
+  [render-text]="true"
+  style="display: block"
+></pdf-viewer>
+<!-- </ng-container> -->

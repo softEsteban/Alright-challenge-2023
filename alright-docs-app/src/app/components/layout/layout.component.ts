@@ -16,13 +16,13 @@ export class LayoutComponent implements OnInit {
 
   profileConfig: any = [{
     "title": "Mis documentos",
-    "method": "router$docs/my-docs",
-    "icon": "file",
+    "method": "router$my-docs",
+    "icon": "file-pdf",
     "children": []
   }, {
     "title": "Mis revisiones",
-    "method": "router$docs/revision",
-    "icon": "file",
+    "method": "router$revision",
+    "icon": "check-circle",
   }];
 
   userData: any;
@@ -44,20 +44,11 @@ export class LayoutComponent implements OnInit {
       this.getUserData();
     }, 4000);
     this.redirectToDocs('my-docs')
-    // this.redirectToDocs('revision')
   }
 
-  // redirectToDocs(docState: any) {
-  //   this.router.navigate(['/docs', docState], { state: { docState: docState } });
-  // }
-
-  // redirectToDocs(docState: any) {
-  //   const url = `/docs/${docState}`;
-  //   this.router.navigateByUrl(url, { state: { docState: docState } });
-  // }
   redirectToDocs(docState: any) {
-    const url = `/docs/my-docs`;
-    this.router.navigateByUrl(url);
+    const url = `/docs/${docState}`;
+    this.router.navigateByUrl(url, { state: { docState: docState } });
   }
 
 
@@ -85,7 +76,7 @@ export class LayoutComponent implements OnInit {
     } else if (name === 'logout') {
       this.logout();
     } else if (split[0] == "router") {
-      this.router.navigate(["/", split[1]]);
+      this.redirectToDocs(`${split[1]}`)
     }
     return;
   }

@@ -12,6 +12,7 @@ import { UsersModule } from './modules/module-users/users.module';
 import { HomeModule } from './modules/module-home/home.module';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { GlobalModule } from './modules/module-global/global.module';
+import { DocsModule } from './modules/module-docs/docs.module';
 
 registerLocaleData(en);
 
@@ -27,10 +28,12 @@ registerLocaleData(en);
     CommonModule,
     ComponentsModule,
     UsersModule,
+    DocsModule,
     HomeModule,
     AppRoutingModule,
     GlobalModule,
-    NgZorroModule
+    NgZorroModule,
+    PdfViewerModule
   ]
 })
 export class AppModule { }

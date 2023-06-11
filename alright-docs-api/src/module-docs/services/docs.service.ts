@@ -20,7 +20,16 @@ export class DocsService {
 
     async createDoc(doc: CreateDocDto): Promise<{ message: string; doc: Docs }> {
         try {
-            const createDoc = new this.docsModel(doc);
+
+            let obj = {
+                name: doc.name,
+                url: doc.url,
+                state: "Sin revisar",
+                dateCreated: new Date(),
+                userId: new Types.ObjectId(doc.userId)
+            }
+
+            const createDoc = new this.docsModel(obj);
             const createdDoc = await createDoc.save();
 
             return {
