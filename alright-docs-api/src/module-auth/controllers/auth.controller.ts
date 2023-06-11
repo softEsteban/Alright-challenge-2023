@@ -25,6 +25,12 @@ export class AuthController {
         return this.authService.getUsers();
     }
 
+    @ApiOperation({ summary: 'Get all users for the select' })
+    @Get('getUsersSelect')
+    async getUsersSelect(): Promise<Users[]> {
+        return this.authService.getUsersSelect();
+    }
+
     @ApiOperation({ summary: 'Register a new user' })
     @Post('registerUser')
     async registerUser(@Body() registerUserDto: RegisterUserDto): Promise<{ message: string; user: Users }> {

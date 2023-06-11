@@ -20,6 +20,11 @@ interface Doc {
   userId: string;
 }
 
+interface User {
+  _id: string;
+  name: string;
+}
+
 @Component({
   selector: 'app-doc-list',
   templateUrl: './doc-list.component.html',
@@ -30,10 +35,15 @@ export class DocListComponent implements OnInit {
   pageTitle: string = "";
 
   listOfDocs: Doc[] = [];
-  docState: string = "";
+  selectedDoc: any;
+  docState: string = "my-docs";
   pdfSrc: string = "";
 
   userId: string = "";
+
+  isPopoverVisible = false;
+  users: User[] = [];
+  selectedUser: string | null = null;
 
   constructor(
     private globalService: GlobalService,
@@ -54,6 +64,7 @@ export class DocListComponent implements OnInit {
     //Fetch data
     this.userId = this.authService.getSessionUserId();
     this.getDocuments();
+    this.getUsersSelect();
 
     //Subscribes to detect changes in route
     this.router.events.subscribe((event) => {
@@ -84,13 +95,20 @@ export class DocListComponent implements OnInit {
     }
   }
 
+  async getUsersSelect() {
+    let data: any = await this.docsService.getUsersSelect();
+    if (data.length > 0) {
+      this.users = data;
+    }
+  }
+
   createMessage(type: string, text: string): void {
     this.message.create(type, `${text}`);
   }
 
   async openCreateDocModal(): Promise<any> {
     const modal = this.modal.create({
-      nzTitle: 'Create document',
+      nzTitle: 'Crear documento',
       nzStyle: {
         "@media (max-width: 767px)": {
           width: "560px",
@@ -130,21 +148,64 @@ export class DocListComponent implements OnInit {
       });
   }
 
-  async sendToRevision(item: any) {
-    const index = this.listOfDocs.findIndex((doc) => doc._id === item._id);
-    if (index !== -1) {
-      this.listOfDocs.splice(index, 1);
+
+  async sendToRevision(): Promise<void> {
+    if (!this.selectedDoc) {
+      return; // No selected document, return early or handle the error
     }
 
-    const data: any = await this.docsService.requestRevision(item._id);
+    const index = this.listOfDocs.findIndex((doc) => doc._id === this.selectedDoc._id);
+    if (index === -1) {
+      return; // Selected document not found in the list, return early or handle the error
+    }
+
+    const data: any = await this.docsService.requestRevision(this.selectedDoc._id, this.selectedUser as string);
+    if (data && data.message) {
+      this.createMessage("success", data.message); // Display the success message received from the server
+      return; // Return early after displaying the message
+    }
+
     if (data) {
-      this.listOfDocs.push(data);
+      this.listOfDocs.splice(index, 1); // Remove the document from the list
+      this.listOfDocs.push(data); // Add the updated document to the list
       this.createMessage("success", "El documento se ha enviado a revisión");
     }
   }
 
   downloadPdf(): void {
   }
+
+  acceptDoc(item: any): void {
+  }
+
+  declineDoc(item: any): void {
+  }
+
+
+  selectDoc(item: any): void {
+    if (this.selectedDoc === item) {
+      this.selectedDoc = null;
+    } else {
+      this.selectedDoc = item;
+    }
+  }
+
+  openPopover(): void {
+    this.selectedUser = null;
+    this.isPopoverVisible = true;
+  }
+
+  handlePopoverVisibleChange(visible: any): void {
+    if (!visible) {
+      this.selectedUser = null;
+    }
+    this.isPopoverVisible = visible;
+  }
+
+  // sendToRevision(item: DocItem): void {
+  //   // Handle sending the item to revision with the selected user
+  //   console.log(`Sending ${item.name} to revision with user ${this.selectedUser}`);
+  // }
 }
 
 

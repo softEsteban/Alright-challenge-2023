@@ -34,9 +34,13 @@ export class AuthService {
         };
     }
 
-
     async getUsers(): Promise<Users[]> {
         const result = await this.usersModel.find().select('-password').exec();
+        return result;
+    }
+
+    async getUsersSelect(): Promise<Users[]> {
+        const result = await this.usersModel.find().select('id name').exec();
         return result;
     }
 

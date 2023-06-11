@@ -14,7 +14,9 @@ export class DocsService {
     }
 
     async getDocsByUser(userId: string): Promise<Docs[]> {
-        const result = await this.docsModel.find({ userId: new Types.ObjectId(userId) }).exec();
+        const result = await this.docsModel
+            .find({ "users.userId": new Types.ObjectId(userId) })
+            .exec();
         return result;
     }
 
@@ -26,7 +28,12 @@ export class DocsService {
                 url: doc.url,
                 state: "Sin revisar",
                 dateCreated: new Date(),
-                userId: new Types.ObjectId(doc.userId)
+                users: [
+                    {
+                        userId: new Types.ObjectId(doc.userId),
+                        rol: "Owner"
+                    }
+                ]
             }
 
             const createDoc = new this.docsModel(obj);
@@ -41,10 +48,28 @@ export class DocsService {
         }
     }
 
-    async requestRevision(docId: string): Promise<Docs> {
+    async requestRevision(docId: string, userIdGuest: string): Promise<Docs | { message: string }> {
+        const docToUpdate = await this.docsModel.findById(docId);
+
+        if (!docToUpdate) {
+            throw new NotFoundException('Document not found');
+        }
+
+        if (docToUpdate.state !== 'Sin revisar') {
+            return { message: 'Document must be in "Sin revisar" state to be reviewed' };
+        }
+
         const updatedDoc = await this.docsModel.findByIdAndUpdate(
             docId,
-            { state: 'En revisión' },
+            {
+                state: 'En revisión',
+                $push: {
+                    users: {
+                        rol: 'Guest',
+                        userId: new Types.ObjectId(userIdGuest),
+                    },
+                },
+            },
             { new: true }
         );
 
@@ -53,5 +78,14 @@ export class DocsService {
         }
 
         return updatedDoc;
+    }
+
+
+    async saveActionLog() {
+        const obj = {
+            "action": "",
+            "dateCreated": "",
+            "userId": "",
+        }
     }
 }

@@ -1,27 +1,8 @@
-// import { Component, OnInit } from '@angular/core';
-
-// @Component({
-//   selector: 'app-create-doc',
-//   templateUrl: './create-doc.component.html',
-//   styleUrls: ['./create-doc.component.scss']
-// })
-// export class CreateDocComponent implements OnInit {
-
-//   constructor() { }
-
-//   ngOnInit(): void {
-//   }
-
-// }
-
-
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalRef } from 'ng-zorro-antd/modal';
 import { NzUploadChangeParam, NzUploadFile } from 'ng-zorro-antd/upload';
-import { Observable, Observer } from 'rxjs';
 import { AuthService } from 'src/app/services/auth.service';
 import { DocsService } from '../services/docs.service';
 import { FirebaseService } from 'src/app/services/firebase.service';

@@ -31,8 +31,8 @@ export class DocsController {
     }
 
     @ApiOperation({ summary: 'Request revision for a document' })
-    @Put('requestRevision/:docId')
-    async requestRevision(@Param('docId') docId: string): Promise<{}> {
-        return this.docsService.requestRevision(docId);
+    @Put('requestRevision/:docId/:userIdGuest')
+    async requestRevision(@Param('docId') docId: string, @Param('userIdGuest') userIdGuest: string): Promise<{}> {
+        return this.docsService.requestRevision(docId, userIdGuest);
     }
 }

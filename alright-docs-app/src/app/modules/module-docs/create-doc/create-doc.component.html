@@ -1,23 +1,27 @@
 <div class="container">
   <nz-form [formGroup]="docForm">
-    <nz-row>
+    <nz-row style="margin-bottom: 12px">
       <nz-form-control nzHasFeedback>
         <nz-col nzXs="24" nzSm="24">
-          <h5 nz-typography>Doc name*</h5>
-          <input nz-input formControlName="name" placeholder="Type name" />
+          <h5 nz-typography>Nombre del documento*</h5>
+          <input
+            nz-input
+            formControlName="name"
+            placeholder="Escribe el name"
+          />
           <div
             class="validation-message"
             *ngIf="docForm.get('name')!.invalid && docForm.get('name')!.touched"
             nz-form-explain
           >
-            Please enter a name
+            El nombre es requerido
           </div>
         </nz-col>
       </nz-form-control>
     </nz-row>
 
     <nz-row style="display: inline; margin-bottom: 12px">
-      <h5 nz-typography>Attach a file</h5>
+      <h5 nz-typography>Sube un PDF</h5>
 
       <nz-upload
         class="upload-list-inline"
@@ -46,7 +50,7 @@
             (click)="createDoc(docForm)"
             nzBlock
           >
-            Submit
+            Enviar
           </button>
         </nz-form-item>
       </nz-col>

@@ -17,8 +17,10 @@ export class Docs {
     @Prop()
     state: string;
 
-    @Prop({ type: Types.ObjectId, ref: 'User' })
-    userId: Types.ObjectId;
+    // @Prop({ type: Types.ObjectId, ref: 'User' })
+    // userId: Types.ObjectId;
+    @Prop()
+    users: { userId: Types.ObjectId, rol: string }[]
 
     @Prop()
     dateCreated: Date;

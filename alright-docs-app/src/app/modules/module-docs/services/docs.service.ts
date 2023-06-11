@@ -27,15 +27,21 @@ export class DocsService {
         );
     }
 
+    async getUsersSelect() {
+        return await lastValueFrom(
+            this.http.get(`${this.host}/auth/getUsersSelect`)
+        );
+    }
+
     async createDoc(doc: any) {
         return await lastValueFrom(
             this.http.post(`${this.host}/docs/createDoc`, doc)
         );
     }
 
-    async requestRevision(docId: any) {
+    async requestRevision(docId: any, userIdGuest: string) {
         return await lastValueFrom(
-            this.http.put(`${this.host}/docs/requestRevision/${docId}`, {})
+            this.http.put(`${this.host}/docs/requestRevision/${docId}/${userIdGuest}`, {})
         );
     }
 
