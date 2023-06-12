@@ -136,12 +136,12 @@ export class DocListComponent implements OnInit {
   }
 
   viewPdf(url: string) {
-    const filePath = `${this.pdfSrc}`; // Replace with the actual file path in Firebase Storage
+    const filePath = `${this.pdfSrc}`;
     this.firebaseService.downloadFile(filePath)
       .then((downloadUrl) => {
         this.pdfSrc = downloadUrl;
         console.log('Download URL:', downloadUrl);
-        window.open(downloadUrl, '_blank'); // Open the download URL in a new tab/window
+        window.open(downloadUrl, '_blank');
       })
       .catch((error: any) => {
         console.error('Error downloading file:', error);
@@ -151,23 +151,23 @@ export class DocListComponent implements OnInit {
 
   async sendToRevision(): Promise<void> {
     if (!this.selectedDoc) {
-      return; // No selected document, return early or handle the error
+      return;
     }
 
     const index = this.listOfDocs.findIndex((doc) => doc._id === this.selectedDoc._id);
     if (index === -1) {
-      return; // Selected document not found in the list, return early or handle the error
+      return;
     }
 
-    const data: any = await this.docsService.requestRevision(this.selectedDoc._id, this.selectedUser as string);
+    const data: any = await this.docsService.requestRevision(this.selectedDoc._id, this.selectedUser as string, this.userId);
     if (data && data.message) {
-      this.createMessage("success", data.message); // Display the success message received from the server
-      return; // Return early after displaying the message
+      this.createMessage("success", data.message);
+      return;
     }
 
     if (data) {
-      this.listOfDocs.splice(index, 1); // Remove the document from the list
-      this.listOfDocs.push(data); // Add the updated document to the list
+      this.listOfDocs.splice(index, 1);
+      this.listOfDocs.push(data);
       this.createMessage("success", "El documento se ha enviado a revisión");
     }
   }

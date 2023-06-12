@@ -8,7 +8,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { NgZorroModule } from './shared/ng-zorro.module';
 import { ComponentsModule } from './components/components.module';
 import { CommonModule, registerLocaleData } from '@angular/common';
-import { UsersModule } from './modules/module-users/users.module';
 import { HomeModule } from './modules/module-home/home.module';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { GlobalModule } from './modules/module-global/global.module';
@@ -27,7 +26,6 @@ registerLocaleData(en);
   imports: [
     CommonModule,
     ComponentsModule,
-    UsersModule,
     DocsModule,
     HomeModule,
     AppRoutingModule,
