@@ -35,4 +35,21 @@ export class DocsController {
     async requestRevision(@Param('docId') docId: string, @Param('userIdGuest') userIdGuest: string, @Param('userIdOwner') userIdOwner: string): Promise<{}> {
         return this.docsService.requestRevision(docId, userIdGuest, userIdOwner);
     }
+
+    @ApiOperation({ summary: 'Gets all actions log by document' })
+    @Get('getDocHistory/:docId')
+    async getDocHistory(@Param('docId') docId: string): Promise<{}> {
+        return this.docsService.getDocHistory(docId);
+    }
+
+    @ApiOperation({ summary: 'Handles a document that is being reviewed' })
+    @Put('handleDocument/:docId/:newState/:userId')
+    async handleDocument(
+        @Param('docId') docId: string,
+        @Param('newState') newState: 'Aceptado' | 'Rechazado',
+        @Param('userId') userId: string
+    ): Promise<Docs> {
+        return this.docsService.handleDocument(docId, newState, userId);
+    }
+
 }

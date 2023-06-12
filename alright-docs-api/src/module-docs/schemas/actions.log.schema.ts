@@ -5,16 +5,14 @@ export type ActionsLogDocument = HydratedDocument<ActionsLog>;
 
 @Schema()
 export class ActionsLog {
-    @Prop()
-    id: string;
 
     @Prop()
     action: string;
 
-    @Prop()
+    @Prop({ type: Types.ObjectId, ref: "users" })
     userId: Types.ObjectId;
 
-    @Prop()
+    @Prop({ type: Types.ObjectId, ref: "documents" })
     docId: Types.ObjectId;
 
     @Prop()

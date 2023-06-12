@@ -71,7 +71,7 @@ export class FirebaseService {
     }
 
     downloadFile(path: string): Promise<string> {
-        const fileRef = ref(this.storage, "docs/my-cv.pdf");
+        const fileRef = ref(this.storage, "alright/docs/my-cv.pdf");
 
         return getDownloadURL(fileRef)
             .then((url) => {

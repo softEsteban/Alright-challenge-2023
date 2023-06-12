@@ -45,4 +45,16 @@ export class DocsService {
         );
     }
 
+    async getDocHistory(docId: any) {
+        return await lastValueFrom(
+            this.http.get(`${this.host}/docs/getDocHistory/${docId}`)
+        );
+    }
+
+    async handleDocument(docId: string, newState: string, userId: string) {
+        return await lastValueFrom(
+            this.http.put(`${this.host}/docs/handleDocument/${docId}/${newState}/${userId}`, {})
+        );
+    }
+
 }

@@ -94,7 +94,7 @@ export class CreateDocComponent implements OnInit {
 
     if (this.uploadedFiles.length > 0) {
       // Uploads to Firebase
-      fileUrls = await this.firebaseService.uploadFiles(this.uploadedFiles, "docs/", { "useCode": userId });
+      fileUrls = await this.firebaseService.uploadFiles(this.uploadedFiles, "alright/docs/", { "useCode": userId });
 
       // Assign the file URLs to the files array
       files = fileUrls.map((fileUrl, index) => ({

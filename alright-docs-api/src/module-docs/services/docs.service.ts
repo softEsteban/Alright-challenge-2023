@@ -21,30 +21,31 @@ export class DocsService {
     async getDocsByUser(userId: string): Promise<Docs[]> {
         const result = await this.docsModel
             .find({ "users.userId": new Types.ObjectId(userId) })
+            .sort({ dateCreated: -1 })
             .exec();
         return result;
     }
 
     async createDoc(doc: CreateDocDto): Promise<{ message: string; doc: Docs }> {
         try {
-            let obj = {
+            const obj = {
                 name: doc.name,
                 url: doc.url,
-                state: "Sin revisar",
+                state: 'Sin revisar',
                 dateCreated: new Date(),
                 users: [
                     {
                         userId: new Types.ObjectId(doc.userId),
-                        rol: "Owner"
-                    }
-                ]
-            }
+                        rol: 'Owner',
+                    },
+                ],
+            };
 
             const createDoc = new this.docsModel(obj);
             const createdDoc = await createDoc.save();
 
             // Creates action log
-            const actionLog = new CreateActionLogDto("Documento creado", doc.userId, createdDoc._id); // Use createdDoc.id instead of createDoc.id
+            const actionLog = new CreateActionLogDto("Documento creado", doc.userId, createdDoc._id);
             this.createActionLog(actionLog);
 
             return {
@@ -95,7 +96,7 @@ export class DocsService {
     async createActionLog(actionLog: CreateActionLogDto): Promise<ActionsLog> {
         const obj = {
             action: actionLog.action,
-            datetime: new Date(),
+            dateCreated: new Date(),
             userId: new Types.ObjectId(actionLog.userId),
             docId: new Types.ObjectId(actionLog.docId),
         }
@@ -103,4 +104,58 @@ export class DocsService {
         const createdActionLog = await createActionLog.save();
         return createdActionLog;
     }
+
+    async getDocHistory(docId: string): Promise<ActionsLog[]> {
+        const actionLogs = await this.actionsLogModel
+            .find({ docId: new Types.ObjectId(docId) })
+            .populate('userId', 'name lastName')
+            .exec();
+
+        return actionLogs;
+    }
+
+    async handleDocument(
+        docId: string,
+        newState: 'Aceptado' | 'Rechazado',
+        userId: string
+    ): Promise<Docs> {
+        const docToUpdate = await this.docsModel.findById(docId);
+
+        if (!docToUpdate) {
+            throw new NotFoundException('Document not found');
+        }
+
+        const validStates = ['En revisión'];
+        if (!validStates.includes(docToUpdate.state)) {
+            throw new ConflictException(
+                'Document must be in "En revisión" state'
+            );
+        }
+
+        const updatedDoc = await this.docsModel.findByIdAndUpdate(
+            docId,
+            {
+                state: newState,
+            },
+            { new: true }
+        );
+
+        if (!updatedDoc) {
+            throw new NotFoundException('Document not found');
+        }
+
+        // Creates action log
+        let actionLogMessage: string;
+        if (newState === 'Aceptado') {
+            actionLogMessage = 'Documento aceptado';
+        } else {
+            actionLogMessage = 'Documento rechazado';
+        }
+
+        const actionLog = new CreateActionLogDto(actionLogMessage, userId, docId);
+        await this.createActionLog(actionLog);
+
+        return updatedDoc;
+    }
+
 }

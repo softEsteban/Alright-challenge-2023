@@ -1,133 +1,152 @@
-<div class="list-container" style="width: 50%">
-  <nz-row
-    style="display: flex; justify-content: space-between; margin-bottom: 15px"
-  >
-    <nz-col>
-      <h2 nz-typography>{{ pageTitle || "Mis documentos" }}</h2>
-    </nz-col>
-    <nz-col>
+<nz-row nzGutter="5">
+  <nz-col class="list-container" nzXs="24" nzMd="12">
+    <nz-row
+      style="display: flex; justify-content: space-between; margin-bottom: 15px"
+    >
+      <nz-col>
+        <h2 nz-typography>{{ pageTitle || "Mis documentos" }}</h2>
+      </nz-col>
+      <nz-col>
+        <button
+          *ngIf="docState == 'my-docs'"
+          nz-button
+          nzType="primary"
+          (click)="openCreateDocModal()"
+        >
+          Crear documento
+        </button>
+      </nz-col>
+    </nz-row>
+
+    <ng-container *ngIf="listOfDocs.length > 0; else noData">
+      <nz-list nzItemLayout="vertical" style="height: 75vh; overflow-y: auto">
+        <nz-list-item
+          *ngFor="let item of listOfDocs"
+          style="margin-right: 7px; cursor: pointer; padding: 10px"
+          [class.selected-doc]="item === selectedDoc"
+          (click)="selectDoc(item)"
+        >
+          <nz-list-item-meta>
+            <nz-list-item-meta-avatar
+              nzSrc="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+            ></nz-list-item-meta-avatar>
+            <nz-list-item-meta-title style="font-size: 12px">
+              <a href="{{ item.url }}">{{ item.name }}</a>
+            </nz-list-item-meta-title>
+            <nz-list-item-meta-description>
+              {{ item.state }} -
+              {{ item.dateCreated | date : "dd MMMM yyyy, hh:mm a" }}
+            </nz-list-item-meta-description>
+          </nz-list-item-meta>
+
+          <nz-list-item-extra>
+            <img
+              width="272"
+              alt="logo"
+              src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+            />
+          </nz-list-item-extra>
+
+          <nz-row nzGutter="5">
+            <nz-col>
+              <button nz-button nzType="primary" (click)="viewPdf(item.url)">
+                Ver PDF
+              </button>
+            </nz-col>
+
+            <nz-col>
+              <button
+                *ngIf="item.state == 'Sin revisar'"
+                nz-button
+                nz-popover
+                nzPopoverTitle="Seleccionar invitado"
+                [nzPopoverContent]="selectUser"
+                nzPopoverPlacement="right"
+                [nzPopoverMouseLeaveDelay]="300"
+              >
+                Solicitar revisión
+              </button>
+            </nz-col>
+
+            <!-- Approval options -->
+            <nz-col>
+              <button
+                nz-button
+                nzType="primary"
+                (click)="acceptDoc(item)"
+                *ngIf="item.state == 'En revisión' && docState == 'revision'"
+              >
+                Aceptar
+              </button>
+            </nz-col>
+
+            <nz-col>
+              <button
+                nz-button
+                nzType="primary"
+                (click)="declineDoc(item)"
+                *ngIf="item.state == 'En revisión' && docState == 'revision'"
+              >
+                Rechazar
+              </button>
+            </nz-col>
+          </nz-row>
+        </nz-list-item>
+      </nz-list>
+    </ng-container>
+
+    <ng-template #selectUser>
+      <nz-select
+        [(ngModel)]="selectedUser"
+        nzPlaceHolder="Seleccionar usuario"
+        style="width: 200px; margin-top: 8px"
+      >
+        <nz-option
+          *ngFor="let user of users"
+          [nzLabel]="user.name"
+          [nzValue]="user._id"
+        ></nz-option>
+      </nz-select>
       <button
-        *ngIf="docState == 'my-docs'"
         nz-button
         nzType="primary"
-        (click)="openCreateDocModal()"
+        [disabled]="!selectedUser"
+        (click)="sendToRevision()"
       >
-        Crear documento
+        Enviar a revisión
       </button>
-    </nz-col>
-  </nz-row>
+    </ng-template>
 
-  <ng-container *ngIf="listOfDocs.length > 0; else noData">
-    <nz-list nzItemLayout="vertical" style="height: 75vh; overflow-y: auto">
-      <nz-list-item
-        *ngFor="let item of listOfDocs"
-        style="margin-right: 7px; cursor: pointer; padding: 10px"
-        [class.selected-doc]="item === selectedDoc"
-        (click)="selectDoc(item)"
-      >
-        <nz-list-item-meta>
-          <nz-list-item-meta-avatar
-            nzSrc="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-          ></nz-list-item-meta-avatar>
-          <nz-list-item-meta-title style="font-size: 12px">
-            <a href="{{ item.url }}">{{ item.name }}</a>
-          </nz-list-item-meta-title>
-          <nz-list-item-meta-description>
-            {{ item.state }} -
-            {{ item.dateCreated | date : "dd MMMM yyyy, hh:mm a" }}
-          </nz-list-item-meta-description>
-        </nz-list-item-meta>
+    <ng-template #noData>
+      <div style="text-align: center; padding: 16px">
+        <p>No hay documentos disponibles.</p>
+        <button nz-button nzType="primary" (click)="openCreateDocModal()">
+          Crear documento
+        </button>
+      </div>
+    </ng-template>
+  </nz-col>
 
-        <nz-list-item-extra>
-          <img
-            width="272"
-            alt="logo"
-            src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-          />
-        </nz-list-item-extra>
+  <nz-col class="dynamic-container" nzXs="24" nzMd="12">
+    <ng-container *ngIf="selectedDoc">
+      <h2 nz-typography>{{ selectedDoc.name }}</h2>
 
-        <nz-row nzGutter="5">
-          <nz-col>
-            <button nz-button nzType="primary" (click)="viewPdf(item.url)">
-              Ver PDF
-            </button>
-          </nz-col>
+      <nz-timeline nzMode="alternate">
+        <nz-timeline-item *ngFor="let item of docHistory">
+          <b>{{ item.action }}</b> <br />
+          by {{ item.userId.name }} {{ item.userId.lastName }} <br />
+          {{ item.dateCreated | date : "dd MMMM yyyy, hh:mm a" }}
+        </nz-timeline-item>
+      </nz-timeline>
+      <ng-template #dotTemplate>
+        <span nz-icon nzType="clock-circle-o" style="font-size: 16px"></span>
+      </ng-template>
+    </ng-container>
+  </nz-col>
+</nz-row>
 
-          <nz-col>
-            <button
-              *ngIf="item.state == 'Sin revisar'"
-              nz-button
-              nz-popover
-              nzPopoverTitle="Seleccionar invitado"
-              [nzPopoverContent]="selectUser"
-              nzPopoverPlacement="right"
-              [nzPopoverMouseLeaveDelay]="300"
-            >
-              Solicitar revisión
-            </button>
-          </nz-col>
-
-          <!-- Approval options -->
-          <nz-col>
-            <button
-              nz-button
-              nzType="primary"
-              (click)="acceptDoc(item)"
-              *ngIf="item.state == 'En revisión' && docState == 'revision'"
-            >
-              Aceptar
-            </button>
-          </nz-col>
-
-          <nz-col>
-            <button
-              nz-button
-              nzType="primary"
-              (click)="declineDoc(item)"
-              *ngIf="item.state == 'En revisión' && docState == 'revision'"
-            >
-              Rechazar
-            </button>
-          </nz-col>
-        </nz-row>
-      </nz-list-item>
-    </nz-list>
-  </ng-container>
-
-  <ng-template #selectUser>
-    <nz-select
-      [(ngModel)]="selectedUser"
-      nzPlaceHolder="Seleccionar usuario"
-      style="width: 200px; margin-top: 8px"
-    >
-      <nz-option
-        *ngFor="let user of users"
-        [nzLabel]="user.name"
-        [nzValue]="user._id"
-      ></nz-option>
-    </nz-select>
-    <button
-      nz-button
-      nzType="primary"
-      [disabled]="!selectedUser"
-      (click)="sendToRevision()"
-    >
-      Enviar a revisión
-    </button>
-  </ng-template>
-
-  <ng-template #noData>
-    <div style="text-align: center; padding: 16px">
-      <p>No hay documentos disponibles.</p>
-      <button nz-button nzType="primary" (click)="openCreateDocModal()">
-        Crear documento
-      </button>
-    </div>
-  </ng-template>
-</div>
-
-<pdf-viewer
+<!-- <pdf-viewer
   [src]="pdfSrc"
   [render-text]="true"
   style="display: block"
-></pdf-viewer>
+></pdf-viewer> -->

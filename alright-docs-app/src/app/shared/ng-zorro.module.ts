@@ -30,6 +30,7 @@ import { NzSkeletonModule } from 'ng-zorro-antd/skeleton';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzUploadModule } from 'ng-zorro-antd/upload';
 import { NzImageModule } from 'ng-zorro-antd/image';
+import { NzTimelineModule } from 'ng-zorro-antd/timeline';
 
 @NgModule({
   declarations: [],
@@ -65,7 +66,8 @@ import { NzImageModule } from 'ng-zorro-antd/image';
     NzSkeletonModule,
     NzPaginationModule,
     NzUploadModule,
-    NzImageModule
+    NzImageModule,
+    NzTimelineModule
   ],
   exports: [
     NzLayoutModule,
@@ -98,7 +100,8 @@ import { NzImageModule } from 'ng-zorro-antd/image';
     NzSkeletonModule,
     NzPaginationModule,
     NzUploadModule,
-    NzImageModule
+    NzImageModule,
+    NzTimelineModule
   ]
 })
 export class NgZorroModule { }

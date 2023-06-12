@@ -3,13 +3,20 @@ import { GlobalService } from 'src/app/services/global.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { DocsService } from '../services/docs.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { CreateDocComponent } from '../create-doc/create-doc.component';
 import { NzModalService } from 'ng-zorro-antd/modal';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { FirebaseService } from 'src/app/services/firebase.service';
-import { DatePipe, registerLocaleData } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+
+interface Log {
+  _id: string;
+  action: string;
+  dateCreated: Date;
+  docId: string;
+  userId: { _id: string, name: string, lastName: string };
+}
 
 interface Doc {
   _id: string;
@@ -36,14 +43,15 @@ export class DocListComponent implements OnInit {
 
   listOfDocs: Doc[] = [];
   selectedDoc: any;
+  docHistory: Log[] = [];
   docState: string = "my-docs";
-  pdfSrc: string = "";
 
   userId: string = "";
-
-  isPopoverVisible = false;
   users: User[] = [];
   selectedUser: string | null = null;
+
+
+  pdfSrc: string = "";
 
   constructor(
     private globalService: GlobalService,
@@ -99,6 +107,15 @@ export class DocListComponent implements OnInit {
     let data: any = await this.docsService.getUsersSelect();
     if (data.length > 0) {
       this.users = data;
+    }
+  }
+
+  async getHistoryLogs() {
+    if (this.selectedDoc._id) {
+      let data: any = await this.docsService.getDocHistory(this.selectedDoc._id);
+      if (data.length > 0) {
+        this.docHistory = data;
+      }
     }
   }
 
@@ -176,9 +193,21 @@ export class DocListComponent implements OnInit {
   }
 
   acceptDoc(item: any): void {
+    const docId = item._id;
+    const newState = "Aceptado";
+    const userId = this.userId;
+    this.docsService.handleDocument(docId, newState, userId);
+    this.createMessage("success", "Documento aceptado");
+
   }
 
   declineDoc(item: any): void {
+    const docId = item._id;
+    const newState = "Rechazado";
+    const userId = this.userId;
+    this.docsService.handleDocument(docId, newState, userId);
+    this.createMessage("success", "Documento denegado");
+
   }
 
 
@@ -187,25 +216,10 @@ export class DocListComponent implements OnInit {
       this.selectedDoc = null;
     } else {
       this.selectedDoc = item;
+      this.getHistoryLogs();
     }
   }
 
-  openPopover(): void {
-    this.selectedUser = null;
-    this.isPopoverVisible = true;
-  }
-
-  handlePopoverVisibleChange(visible: any): void {
-    if (!visible) {
-      this.selectedUser = null;
-    }
-    this.isPopoverVisible = visible;
-  }
-
-  // sendToRevision(item: DocItem): void {
-  //   // Handle sending the item to revision with the selected user
-  //   console.log(`Sending ${item.name} to revision with user ${this.selectedUser}`);
-  // }
 }
 
 
