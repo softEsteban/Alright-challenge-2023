@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewContainerRef } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { GlobalService } from 'src/app/services/global.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { DocsService } from '../services/docs.service';
@@ -9,6 +10,7 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
+// import { AngularFireDatabase } '@angular/fire/compat/database';
 
 interface Log {
   _id: string;
@@ -50,13 +52,14 @@ export class DocListComponent implements OnInit {
   users: User[] = [];
   selectedUser: string | null = null;
 
-
-  pdfSrc: string = "";
+  contentType: string = "";
+  pdfSrc: SafeResourceUrl | undefined;
 
   constructor(
     private globalService: GlobalService,
     private docsService: DocsService,
     private firebaseService: FirebaseService,
+    private sanitizer: DomSanitizer,
     private authService: AuthService,
     private viewContainerRef: ViewContainerRef,
     private modal: NzModalService,
@@ -64,6 +67,7 @@ export class DocListComponent implements OnInit {
     private router: Router) {
     globalService.setTitle("Docs");
     registerLocaleData(localeEs);
+    this.pdfSrc = undefined;
   }
 
 
@@ -111,7 +115,7 @@ export class DocListComponent implements OnInit {
   }
 
   async getHistoryLogs() {
-    if (this.selectedDoc._id) {
+    if (this.selectedDoc && this.selectedDoc._id) {
       let data: any = await this.docsService.getDocHistory(this.selectedDoc._id);
       if (data.length > 0) {
         this.docHistory = data;
@@ -153,16 +157,21 @@ export class DocListComponent implements OnInit {
   }
 
   viewPdf(url: string) {
-    const filePath = `${this.pdfSrc}`;
-    this.firebaseService.downloadFile(filePath)
-      .then((downloadUrl) => {
-        this.pdfSrc = downloadUrl;
-        console.log('Download URL:', downloadUrl);
-        window.open(downloadUrl, '_blank');
-      })
-      .catch((error: any) => {
-        console.error('Error downloading file:', error);
-      });
+
+    console.log(url)
+    console.log(this.contentType)
+    this.pdfSrc = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    console.log(this.pdfSrc)
+
+    // const filePath = `${this.pdfSrc}`;
+    // this.firebaseService.downloadFile(filePath)
+    //   .then((downloadUrl) => {
+    //     this.pdfSrc = downloadUrl;
+    //     window.open(downloadUrl, '_blank');
+    //   })
+    //   .catch((error: any) => {
+    //     console.error('Error downloading file:', error);
+    //   });
   }
 
 
@@ -176,15 +185,22 @@ export class DocListComponent implements OnInit {
       return;
     }
 
-    const data: any = await this.docsService.requestRevision(this.selectedDoc._id, this.selectedUser as string, this.userId);
-    if (data && data.message) {
-      this.createMessage("success", data.message);
-      return;
+    let data: any = {};
+    try {
+      data = await this.docsService.requestRevision(this.selectedDoc._id, this.selectedUser as string, this.userId);
+      if (data && data.message) {
+        this.createMessage("success", data.message);
+        return;
+      }
+    } catch (error) {
+      this.createMessage("error", "Ha ocurrido un error");
     }
+
 
     if (data) {
       this.listOfDocs.splice(index, 1);
       this.listOfDocs.push(data);
+      this.getHistoryLogs();
       this.createMessage("success", "El documento se ha enviado a revisión");
     }
   }
@@ -193,21 +209,33 @@ export class DocListComponent implements OnInit {
   }
 
   acceptDoc(item: any): void {
-    const docId = item._id;
-    const newState = "Aceptado";
-    const userId = this.userId;
-    this.docsService.handleDocument(docId, newState, userId);
-    this.createMessage("success", "Documento aceptado");
+    try {
+      const docId = item._id;
+      const newState = "Aceptado";
+      const userId = this.userId;
+      this.docsService.handleDocument(docId, newState, userId);
+      this.getDocuments();
+      this.getHistoryLogs();
+      this.createMessage("success", "Documento aceptado");
 
+    } catch (error) {
+      this.createMessage("error", "Ha ocurrido un error");
+    }
   }
 
   declineDoc(item: any): void {
-    const docId = item._id;
-    const newState = "Rechazado";
-    const userId = this.userId;
-    this.docsService.handleDocument(docId, newState, userId);
-    this.createMessage("success", "Documento denegado");
+    try {
+      const docId = item._id;
+      const newState = "Aceptado";
+      const userId = this.userId;
+      this.docsService.handleDocument(docId, newState, userId);
+      this.getDocuments();
+      this.getHistoryLogs();
+      this.createMessage("success", "Documento denegado");
 
+    } catch (error) {
+      this.createMessage("error", "Ha ocurrido un error");
+    }
   }
 
 

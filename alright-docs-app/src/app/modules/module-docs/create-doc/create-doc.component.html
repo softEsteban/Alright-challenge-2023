@@ -46,7 +46,7 @@
             style="margin-top: 15px"
             nz-button
             nzType="primary"
-            [disabled]="docForm.invalid"
+            [disabled]="docForm.invalid || fileList.length === 0"
             (click)="createDoc(docForm)"
             nzBlock
           >

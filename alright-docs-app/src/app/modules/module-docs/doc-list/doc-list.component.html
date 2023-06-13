@@ -24,7 +24,6 @@
           *ngFor="let item of listOfDocs"
           style="margin-right: 7px; cursor: pointer; padding: 10px"
           [class.selected-doc]="item === selectedDoc"
-          (click)="selectDoc(item)"
         >
           <nz-list-item-meta>
             <nz-list-item-meta-avatar
@@ -38,19 +37,25 @@
               {{ item.dateCreated | date : "dd MMMM yyyy, hh:mm a" }}
             </nz-list-item-meta-description>
           </nz-list-item-meta>
+          <!-- src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png" -->
 
           <nz-list-item-extra>
             <img
+              (click)="contentType = 'pdf-viewer'; viewPdf(item.url)"
               width="272"
-              alt="logo"
               src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
+              alt="logo"
             />
           </nz-list-item-extra>
 
           <nz-row nzGutter="5">
             <nz-col>
-              <button nz-button nzType="primary" (click)="viewPdf(item.url)">
-                Ver PDF
+              <button
+                (click)="contentType = 'history'; selectDoc(item)"
+                nz-button
+                nzType="primary"
+              >
+                Historial
               </button>
             </nz-col>
 
@@ -62,6 +67,7 @@
                 nzPopoverTitle="Seleccionar invitado"
                 [nzPopoverContent]="selectUser"
                 nzPopoverPlacement="right"
+                nzPopoverTrigger="click"
                 [nzPopoverMouseLeaveDelay]="300"
               >
                 Solicitar revisión
@@ -73,7 +79,7 @@
               <button
                 nz-button
                 nzType="primary"
-                (click)="acceptDoc(item)"
+                (click)="selectDoc(item); acceptDoc(item)"
                 *ngIf="item.state == 'En revisión' && docState == 'revision'"
               >
                 Aceptar
@@ -84,7 +90,7 @@
               <button
                 nz-button
                 nzType="primary"
-                (click)="declineDoc(item)"
+                (click)="selectDoc(item); declineDoc(item)"
                 *ngIf="item.state == 'En revisión' && docState == 'revision'"
               >
                 Rechazar
@@ -128,7 +134,7 @@
   </nz-col>
 
   <nz-col class="dynamic-container" nzXs="24" nzMd="12">
-    <ng-container *ngIf="selectedDoc">
+    <ng-container *ngIf="selectedDoc && contentType == 'history'">
       <h2 nz-typography>{{ selectedDoc.name }}</h2>
 
       <nz-timeline nzMode="alternate">
@@ -141,6 +147,16 @@
       <ng-template #dotTemplate>
         <span nz-icon nzType="clock-circle-o" style="font-size: 16px"></span>
       </ng-template>
+    </ng-container>
+
+    <ng-container *ngIf="selectedDoc && contentType == 'pdf-viewer'">
+      <p>PDF is working</p>
+      <!-- <iframe
+        [src]="pdfSrc"
+        width="100%"
+        height="500px"
+        frameborder="0"
+      ></iframe> -->
     </ng-container>
   </nz-col>
 </nz-row>

@@ -10,7 +10,6 @@ import { ComponentsModule } from './components/components.module';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import { HomeModule } from './modules/module-home/home.module';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import { GlobalModule } from './modules/module-global/global.module';
 import { DocsModule } from './modules/module-docs/docs.module';
 
 registerLocaleData(en);
@@ -29,7 +28,6 @@ registerLocaleData(en);
     DocsModule,
     HomeModule,
     AppRoutingModule,
-    GlobalModule,
     NgZorroModule,
     PdfViewerModule
   ]
